@@ -47,7 +47,7 @@ function Entity(projectId) {
   if (keyFile) {
     options.keyFilename = keyFile;
   }
-  this.datastore = gcloud.datastore.dataset(options);
+  this.datastore = gcloud.datastore(options);
 
   // To create the keys, we have to use this instance of Datastore.
   datastore.key = this.datastore.key;
@@ -207,6 +207,27 @@ Entity.prototype.testBasicEntity = function(callback) {
   this.datastore.save({
     key: this.getIncompleteKey(),
     data: this.getTask()
+  }, callback);
+};
+
+Entity.prototype.testUpsert = function(callback) {
+  var taskKey = this.getIncompleteKey();
+  var task = this.getTask();
+
+  // [START upsert]
+  datastore.upsert({
+    key: taskKey,
+    data: task
+  }, function(err) {
+    if (!err) {
+      // Task inserted successfully.
+    }
+  });
+  // [END upsert]
+
+  this.datastore.upsert({
+    key: taskKey,
+    data: task
   }, callback);
 };
 
@@ -423,7 +444,7 @@ function Index(projectId) {
   if (keyFile) {
     options.keyFilename = keyFile;
   }
-  this.datastore = gcloud.datastore.dataset(options);
+  this.datastore = gcloud.datastore(options);
 }
 
 Index.prototype.testUnindexedPropertyQuery = function(callback) {
@@ -473,7 +494,7 @@ function Metadata(projectId) {
   if (keyFile) {
     options.keyFilename = keyFile;
   }
-  this.datastore = gcloud.datastore.dataset(options);
+  this.datastore = gcloud.datastore(options);
 }
 
 Metadata.prototype.testNamespaceRunQuery = function(callback) {
@@ -611,7 +632,7 @@ function Query(projectId) {
   if (keyFile) {
     options.keyFilename = keyFile;
   }
-  this.datastore = gcloud.datastore.dataset(options);
+  this.datastore = gcloud.datastore(options);
 
   this.basicQuery = this.getBasicQuery();
   this.projectionQuery = this.getProjectionQuery();
@@ -1046,7 +1067,7 @@ function Transaction(projectId) {
   if (keyFile) {
     options.keyFilename = keyFile;
   }
-  this.datastore = gcloud.datastore.dataset(options);
+  this.datastore = gcloud.datastore(options);
 
   this.fromKey = this.datastore.key(['Bank', 1, 'Account', 1]);
   this.toKey = this.datastore.key(['Bank', 1, 'Account', 2]);
